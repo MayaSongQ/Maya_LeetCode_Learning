@@ -1,0 +1,78 @@
+1480 Running Sum of 1d Array
+Given an array nums. We define a running sum of an array as runningSum[i] = sum(nums[0]…nums[i]).
+Return the running sum of nums.
+ 
+Example 1:
+Input: nums = [1,2,3,4]
+Output: [1,3,6,10]
+Explanation: Running sum is obtained as follows: [1, 1+2, 1+2+3, 1+2+3+4].
+Example 2:
+Input: nums = [1,1,1,1,1]
+Output: [1,2,3,4,5]
+Explanation: Running sum is obtained as follows: [1, 1+1, 1+1+1, 1+1+1+1, 1+1+1+1+1].
+Example 3:
+Input: nums = [3,1,2,10,1]
+Output: [3,4,6,16,17]
+
+ 
+Constraints:
+1 <= nums.length <= 1000
+-10^6 <= nums[i] <= 10^6
+
+class Solution {
+public:
+    vector<int> runningSum(vector<int>& nums) {
+        vector<int> returnSum = nums; // If returnSum is not initialized, there will be an runtime error. It should be related to the code 'returnSum[index] = total' below
+        int total = 0;
+        for ( int index = 0; index < nums.size(); index++ ) // STL中vector的长度函数是size不是length
+        {
+            total += nums[index];
+            returnSum[index] = total;
+        }
+        return returnSum;
+    }
+};
+
+class Solution {
+public:
+    vector<int> runningSum(vector<int>& nums) {
+        vector<int> returnSum;
+        int total = 0;
+        for ( int index = 0; index < nums.size(); index++ )
+        {
+            total += nums[index];
+            returnSum.push_back(total); // The push_back function will cause the memory increase
+        }
+        return returnSum;
+    }
+};
+
+
+Discussion:
+Solution 1:
+class Solution {
+public:
+    vector<int> runningSum(vector<int>& nums) {
+        int prev = 0;        
+        for(int i = 0; i < nums.size(); i++){
+            nums[i] += prev;
+            prev = nums[i]; // The original nums will be useless after return. So the input nums can be reused.
+        } 
+        return nums;
+    }
+};
+
+Solution 2: very simple solution cpp, C++ Runtime: 4 ms, faster than 100% of C++. 
+class Solution {
+public:
+vector<int> runningSum(vector<int>& nums) 
+{
+    for(int i=1; i<nums.size(); i++)
+    {
+        nums[i]+=nums[i-1];
+    }
+    return nums;
+  }
+};
+
+These two solutions are fast, but very danger. Look at definition of method runningSum, it is not "void". Reuse the input 'nums' may cause side effect in the real work.
