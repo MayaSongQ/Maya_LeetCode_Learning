@@ -1,0 +1,59 @@
+Given an array of integers nums.
+A pair (i,j) is called good if nums[i] == nums[j] and i < j.
+Return the number of good pairs.
+ 
+Example 1:
+Input: nums = [1,2,3,1,1,3]
+Output: 4
+Explanation: There are 4 good pairs (0,3), (0,4), (3,4), (2,5) 0-indexed.
+
+Example 2:
+Input: nums = [1,1,1,1]
+Output: 6
+Explanation: Each pair in the array are good.
+
+Example 3:
+Input: nums = [1,2,3]
+Output: 0
+
+ 
+Constraints:
+1 <= nums.length <= 100
+1 <= nums[i] <= 100
+
+
+Solution 1: Rumtime 0 ms faster than 100%, memory 7.3 MB less than 85.79%
+class Solution {
+public:
+    int numIdenticalPairs(vector<int>& nums) {
+        int iReturnPairs = 0;
+        
+        // Find the numbers have same value, using A(n,2) = n*(n-1)/2 to get the pairs
+        
+        // Store the calculated values to reduce the loop number
+        map<int, int> valuePairs;
+        for (int i=0; i<nums.size(); ++i)
+        {
+            int iNumValue = nums[i];
+            if (valuePairs.find(iNumValue) != valuePairs.end())
+            {
+                continue;
+            }
+            
+            int iCount = 0;
+            for (int j=i; j<nums.size(); ++j)
+            {
+                if (nums[i] == nums[j])
+                {
+                    ++iCount;
+                }
+            }
+            if (0 != iCount) // Always put the constent in the left side in case we use '=' as '=='
+            {
+                valuePairs.insert(std::make_pair(iNumValue,iCount));
+                iReturnPairs += iCount * (iCount-1)/2;
+            }
+        }
+        return iReturnPairs;
+    }
+};
