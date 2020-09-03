@@ -1,0 +1,28 @@
+Solution 1: Rumtime 8ms, faster than 93.87%, Memory 10.1 MB, less than 20.56%
+class Solution {
+public:
+    vector<int> shuffle(vector<int>& nums, int n) {
+        vector<int> returnNums;
+        for (int index = 0; index < n; index++ )
+        {
+            returnNums.push_back(nums[index]); // 'push_back' has additional memory cost
+            returnNums.push_back(nums[index+n]);
+        }
+        return returnNums;
+    }
+};
+
+Solution 2: Runtime 8 ms, faster than 93.87%, Memory 9.8 MB, less than 83.3%
+class Solution {
+public:
+    vector<int> shuffle(vector<int>& nums, int n) {
+        vector<int> returnNums = nums;
+        for (int index = 0; index < n; index++ )
+        {
+            int key = index * 2;
+            returnNums[key] = nums[index];
+            returnNums[key+1] = nums[index+n];
+        }
+        return returnNums;
+    }
+};
