@@ -1,0 +1,88 @@
+Given a square matrix mat, return the sum of the matrix diagonals.
+
+Only include the sum of all the elements on the primary diagonal and all the elements on the secondary diagonal that are not part of the primary diagonal.
+
+ 
+
+Example 1:
+
+
+Input: mat = [[1,2,3],
+              [4,5,6],
+              [7,8,9]]
+Output: 25
+Explanation: Diagonals sum: 1 + 5 + 9 + 3 + 7 = 25
+Notice that element mat[1][1] = 5 is counted only once.
+Example 2:
+
+Input: mat = [[1,1,1,1],
+              [1,1,1,1],
+              [1,1,1,1],
+              [1,1,1,1]]
+Output: 8
+Example 3:
+
+Input: mat = [[5]]
+Output: 5
+ 
+
+Constraints:
+
+n == mat.length == mat[i].length
+1 <= n <= 100
+1 <= mat[i][j] <= 100
+
+My Solution 1: Runtime: 28 ms, faster than 83.33%. Memory Usage: 11.4 MB, less than 66.67%
+class Solution {
+public:
+    int diagonalSum(vector<vector<int>>& mat) {
+        int iReturn = 0;
+        if (0 <mat.size())
+        {
+            bool bOdd = (0==mat[0].size()%2)?false:true;
+            
+            // primary diagonal
+            for (int i=0; i<mat.size(); ++i)
+            {
+                iReturn += mat[i][i];
+            }
+            
+            // secondary diagonal
+            for (int i=0,j=mat.size()-1; i<mat.size()&&j>=0; ++i,--j)
+            {
+                iReturn += mat[i][j];
+            }
+            
+            // remove the overlap
+            if (bOdd)
+            {
+                iReturn -= mat[mat[0].size()/2][mat[0].size()/2];
+            }
+        }
+        return iReturn;
+    }
+};
+
+Solution 2: Runtime: 28 ms, faster than 83.33%. Memory Usage: 11.6 MB, less than 16.67%
+The result is strange. Two loops have less memory usage than one loop.
+class Solution {
+public:
+    int diagonalSum(vector<vector<int>>& mat) {
+        int iReturn = 0;
+        if (0 <mat.size())
+        {
+            for (int i=0,j=mat.size()-1; i<mat.size()&&j>=0; ++i,--j)
+            {
+                iReturn += mat[i][i];// primary diagonal
+                iReturn += mat[i][j];// secondary diagonal
+            }
+            
+            // remove the repeated element
+            if ((0==mat[0].size()%2)?false:true)
+            {
+                iReturn -= mat[mat[0].size()/2][mat[0].size()/2];
+            }
+        }
+        return iReturn;
+    }
+};
