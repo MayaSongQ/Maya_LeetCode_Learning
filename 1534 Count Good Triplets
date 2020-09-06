@@ -1,0 +1,157 @@
+Given an array of integers arr, and three integers a, b and c. You need to find the number of good triplets.
+
+A triplet (arr[i], arr[j], arr[k]) is good if the following conditions are true:
+
+0 <= i < j < k < arr.length
+|arr[i] - arr[j]| <= a
+|arr[j] - arr[k]| <= b
+|arr[i] - arr[k]| <= c
+Where |x| denotes the absolute value of x.
+
+Return the number of good triplets.
+
+ 
+
+Example 1:
+
+Input: arr = [3,0,1,1,9,7], a = 7, b = 2, c = 3
+Output: 4
+Explanation: There are 4 good triplets: [(3,0,1), (3,0,1), (3,1,1), (0,1,1)].
+Example 2:
+
+Input: arr = [1,1,2,2,3], a = 0, b = 0, c = 1
+Output: 0
+Explanation: No triplet satisfies all conditions.
+ 
+
+Constraints:
+
+3 <= arr.length <= 100
+0 <= arr[i] <= 1000
+0 <= a, b, c <= 1000
+
+Solution 1: Failure for the test case [1,7,4,5,2,0],2,5,6, Return 11 but expected 5
+class Solution {
+public:
+    int countGoodTriplets(vector<int>& arr, int a, int b, int c) {
+        int iReturn = 0;
+        for (int i=0; i<arr.size(); ++i)
+        {
+            for (int j=i+1; j<arr.size(); ++j)
+            {
+                if (abs(arr[i]-arr[j])<=a)
+                {
+                    printf("a: i=%d, j=%d, abs=%d;", i,j,abs(arr[i]-arr[j]));
+                    for (int k=j+1; k<arr.size(); ++k)
+                    {
+                        if (abs(arr[j]-arr[k])<=b && abs(arr[i]-arr[k])<=c)
+                        {
+                            printf("a: k=%d,abs1=%d, abs2=%d;", k,abs(arr[i]-arr[k]),abs(arr[j]-arr[k]));
+                            printf("\nindex: %d, i=%d,j=%d, k=%d;\n", iReturn,i,j,k);
+                            iReturn++;
+                        }
+                    }
+                }
+                else if (abs(arr[i]-arr[j])<=b)// This branch is not correct.
+                {
+                    printf("b: i=%d, j=%d, abs=%d;", i,j,abs(arr[i]-arr[j]));
+                    for (int k=j+1; k<arr.size(); ++k)
+                    {
+                        if (abs(arr[j]-arr[k])<=a && abs(arr[i]-arr[k])<=c)
+                        {
+                            printf("b: k=%d,abs1=%d, abs2=%d;", k,abs(arr[i]-arr[k]),abs(arr[j]-arr[k]));
+                            printf("\nindex: %d, i=%d,j=%d, k=%d;\n", iReturn,i,j,k);
+                            iReturn++;
+                        }
+                    }
+                }
+                else if (abs(arr[i]-arr[j])<=c) // This branch is not correct.
+                {
+                    printf("c: i=%d, j=%d, abs=%d;", i,j,abs(arr[i]-arr[j]));
+                    for (int k=j+1; k<arr.size(); ++k)
+                    {
+                        if (abs(arr[j]-arr[k])<=b && abs(arr[i]-arr[k])<=a)
+                        {
+                            printf("c: k=%d,abs1=%d, abs2=%d;", k,abs(arr[i]-arr[k]),abs(arr[j]-arr[k]));
+                            printf("\nindex: %d, i=%d,j=%d, k=%d;\n", iReturn,i,j,k);
+                            iReturn++;
+                        }
+                    }
+                }
+            }
+        }
+        return iReturn;
+    }
+};
+c: i=0, j=1, abs=6;c: k=4,abs1=1, abs2=5;
+index: 0, i=0,j=1, k=4;
+b: i=0, j=2, abs=3;b: k=3,abs1=4, abs2=1;
+index: 1, i=0,j=2, k=3;
+b: k=4,abs1=1, abs2=2;
+index: 2, i=0,j=2, k=4;
+b: i=0, j=3, abs=4;a: i=0, j=4, abs=1;a: k=5,abs1=1, abs2=2;
+index: 3, i=0,j=4, k=5;
+a: i=0, j=5, abs=1;b: i=1, j=2, abs=3;b: k=3,abs1=2, abs2=1;
+index: 4, i=1,j=2, k=3;
+b: k=4,abs1=5, abs2=2;
+index: 5, i=1,j=2, k=4;
+a: i=1, j=3, abs=2;a: k=4,abs1=5, abs2=3;
+index: 6, i=1,j=3, k=4;
+b: i=1, j=4, abs=5;a: i=2, j=3, abs=1;a: k=4,abs1=2, abs2=3;
+index: 7, i=2,j=3, k=4;
+a: k=5,abs1=4, abs2=5;
+index: 8, i=2,j=3, k=5;
+a: i=2, j=4, abs=2;a: k=5,abs1=4, abs2=2;
+index: 9, i=2,j=4, k=5;
+b: i=2, j=5, abs=4;b: i=3, j=4, abs=3;b: k=5,abs1=5, abs2=2;
+index: 10, i=3,j=4, k=5;
+b: i=3, j=5, abs=5;a: i=4, j=5, abs=2;
+
+Solution 2: Runtime: 88 ms, faster than 8.01%. Memory Usage: 8.3 MB, less than 69.38%
+class Solution {
+public:
+    int countGoodTriplets(vector<int>& arr, int a, int b, int c) {
+        int iReturn = 0;
+        for (int i=0; i<arr.size(); ++i)
+        {
+            for (int j=i+1; j<arr.size(); ++j)
+            {
+                for (int k=j+1; k<arr.size(); ++k)
+                {
+                    if (abs(arr[i]-arr[j])<=a && abs(arr[j]-arr[k])<=b && abs(arr[i]-arr[k])<=c)
+                    {
+                        //printf("\nindex: %d, i=%d,j=%d, k=%d;\n", iReturn,i,j,k);
+                        iReturn++;
+                    }
+                }
+            }
+        }
+        return iReturn;
+    }
+};
+
+Solution 3: Runtime: 48 ms, faster than 42.85%. Memory Usage: 8.4 MB, less than 33.11%
+class Solution {
+public:
+    int countGoodTriplets(vector<int>& arr, int a, int b, int c) {
+        int iReturn = 0;
+        for (int i=0; i<arr.size(); ++i)
+        {
+            for (int j=i+1; j<arr.size(); ++j)
+            {
+                if (abs(arr[i]-arr[j])<=a)
+                {
+                    for (int k=j+1; k<arr.size(); ++k)
+                    {
+                        if (abs(arr[j]-arr[k])<=b && abs(arr[i]-arr[k])<=c)
+                        {
+                            //printf("\nindex: %d, i=%d,j=%d, k=%d;\n", iReturn,i,j,k);
+                            iReturn++;
+                        }
+                    }
+                }
+            }
+        }
+        return iReturn;
+    }
+};
