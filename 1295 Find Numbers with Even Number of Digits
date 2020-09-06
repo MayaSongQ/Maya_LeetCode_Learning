@@ -1,0 +1,110 @@
+Given an array nums of integers, return how many of them contain an even number of digits.
+ 
+
+Example 1:
+
+Input: nums = [12,345,2,6,7896]
+Output: 2
+Explanation: 
+12 contains 2 digits (even number of digits). 
+345 contains 3 digits (odd number of digits). 
+2 contains 1 digit (odd number of digits). 
+6 contains 1 digit (odd number of digits). 
+7896 contains 4 digits (even number of digits). 
+Therefore only 12 and 7896 contain an even number of digits.
+Example 2:
+
+Input: nums = [555,901,482,1771]
+Output: 1 
+Explanation: 
+Only 1771 contains an even number of digits.
+ 
+
+Constraints:
+
+1 <= nums.length <= 500
+1 <= nums[i] <= 10^5
+
+Solution 1: Runtime: 16 ms, faster than 33.93%; Memory Usage: 9.9 MB, less than 63.95%
+class Solution {
+public:
+    int findNumbers(vector<int>& nums) {
+        int iReturn = 0;
+        for (int index=0; index<nums.size(); ++index)
+        {
+            string strDigits = to_string(nums[index]);
+            if (0 == strDigits.length()%2)
+            {
+                iReturn++;
+            }
+        }
+        return iReturn;
+    }
+};
+
+Solution 2 from Tanjim131:
+A number n is base 10 has exactly floor(log_10(n)) + 1 digits.
+class Solution {
+public:
+    int findNumbers(vector<int>& nums) {
+        int counter = 0;
+        for(int i = 0 ; i < nums.size() ; ++i){
+            int digits = static_cast<int>(log10(nums[i])) + 1;
+            counter += digits % 2 == 0;
+        }
+        return counter;
+    }
+};
+Similar solution from gurubelli
+
+class Solution {
+    public int findNumbers(int[] nums) {
+        int total = 0;
+        for (Integer num : nums) {
+            total+= (int) (Math.floor(Math.log10(num)) + 1) % 2 == 0 ? 1: 0;
+        }
+        return total;
+    }
+}
+
+Solution 3: Runtime: 24 ms, faster than 8.16%; Memory Usage: 9.8 MB, less than 96.22%
+A solution from Java source code for Integer:
+final static int [] sizeTable = { 9, 99, 999, 9999, 99999, 999999, 9999999,
+                                      99999999, 999999999, Integer.MAX_VALUE };
+// Requires positive x
+static int stringSize(int x) {
+    for (int i=0; ; i++)
+        if (x <= sizeTable[i])
+            return i+1;
+}
+
+class Solution {
+public:
+    int findNumbers(vector<int>& nums) {
+        int iReturn = 0;
+        int sizeTable[6];
+        sizeTable[0] = 9;
+        sizeTable[1] = 99;
+        sizeTable[2] = 999;
+        sizeTable[3] = 9999;
+        sizeTable[4] = 99999;
+        sizeTable[5] = 999999;
+
+        // Requires positive nums[index]
+        for (int index=0; index<nums.size(); ++index)
+        {
+            for (int iSize=0; iSize<6; ++iSize)
+            {
+                if (nums[index] < sizeTable[iSize])
+                {
+                    if (0 == (iSize+1)%2)
+                    {
+                        iReturn++;
+                    }
+                    break;
+                }
+            }
+        }
+        return iReturn;
+    }
+};
