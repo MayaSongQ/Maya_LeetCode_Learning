@@ -1,0 +1,146 @@
+Given a non-empty array of integers, return the third maximum number in this array. If it does not exist, return the maximum number. The time complexity must be in O(n).
+
+Example 1:
+Input: [3, 2, 1]
+
+Output: 1
+
+Explanation: The third maximum is 1.
+
+
+Example 1':
+Input: [1,2,-2147483648]
+
+Output: -2147483648
+
+Explanation: The third maximum is -2147483648. The input array is vector<int>, the mini value should be INT_MIN.
+
+Example 2:
+Input: [1, 2]
+
+Output: 2
+
+Explanation: The third maximum does not exist, so the maximum (2) is returned instead.
+Example 3:
+Input: [2, 2, 3, 1]
+
+Output: 1
+
+Explanation: Note that the third maximum here means the third maximum distinct number.
+Both numbers with value 2 are both considered as second maximum.
+
+My Solution: Runtime: 24 ms, faster than 29.53%. Memory Usage: 10.6 MB, less than 17.98%
+class Solution {
+public:
+    int thirdMax(vector<int>& nums) {
+        int iMax = 0;
+        // First step: do the sort
+        // STL set is a good choice. The auto order of Set is ascending.
+        set<int> setSort;
+        for (int index=0; index<nums.size(); ++index)
+        {
+            setSort.insert(nums[index]);
+        }
+        if (2>=setSort.size())
+        {
+            // The condition is nums is non-empty.
+            iMax = *(--setSort.end());
+        }
+        else
+        {
+            set<int>::iterator itor = --setSort.end();
+            itor--;
+            itor--;
+            iMax = *itor;
+        }
+        return iMax;
+    }
+};
+
+Solution 2: Runtime: 20 ms, faster than 44.48%.Memory Usage: 9.2 MB, less than 48.93%
+class Solution {
+public:
+    int thirdMax(vector<int>& nums) {
+        // Max number record
+        int iMax1 = INT_MIN; The input array is vector<int>, the mini value should be INT_MIN.
+        int iMax2 = INT_MIN;
+        int iMax3 = INT_MIN;
+        bool bMax1 = false;
+        bool bMax2 = false;
+        bool bMax3 = false;
+        
+        for (int index=0; index<nums.size(); ++index)
+        {
+            if (nums[index]>=iMax1)
+            {
+                if (nums[index] == iMax1)
+                {
+                    bMax1 = true;
+                    continue;
+                }
+                else if (!bMax1)
+                {
+                    iMax1 = nums[index];
+                    bMax1 = true;
+                    printf("iM1=%d,iM2=%d,iM3=%d,bM1=%d,bM2=%d,bM3=%d\n",iMax1,iMax2,iMax3,bMax1,bMax2,bMax3);
+                    continue;
+                }
+                else if (!bMax2)
+                {
+                    bMax2 = true;
+                }
+                else if (!bMax3)
+                {
+                    bMax3 = true;
+                }
+                iMax3 = iMax2;
+                iMax2 = iMax1;
+                iMax1 = nums[index];
+                bMax1 = true;
+            }
+            else if (nums[index]>=iMax2)
+            {
+                if (nums[index] == iMax2)
+                {
+                    bMax2 = true;
+                    continue;
+                }
+                else if (!bMax2)
+                {
+                    iMax2 = nums[index];
+                    bMax2 = true;
+                    printf("iM1=%d,iM2=%d,iM3=%d,bM1=%d,bM2=%d,bM3=%d\n",iMax1,iMax2,iMax3,bMax1,bMax2,bMax3);
+                    continue;
+                }
+                else if (!bMax3)
+                {
+                    bMax3 = true;
+                }
+                iMax3 = iMax2;
+                iMax2 = nums[index];
+                bMax2 = true;
+                printf("iM1=%d,iM2=%d,iM3=%d,bM1=%d,bM2=%d,bM3=%d\n",iMax1,iMax2,iMax3,bMax1,bMax2,bMax3);
+            }
+            else if (nums[index]>=iMax3)
+            {
+                if (nums[index] == iMax3)
+                {
+                    bMax3 = true;
+                    continue;
+                }
+                iMax3 = nums[index];
+                bMax3 = true;
+            }
+            printf("iM1=%d,iM2=%d,iM3=%d,bM1=%d,bM2=%d,bM3=%d\n",iMax1,iMax2,iMax3,bMax1,bMax2,bMax3);
+        }
+        
+        if (!bMax3)
+        {
+            return iMax1;
+        }
+        else
+        {
+            return iMax3;
+        }
+    }
+};
