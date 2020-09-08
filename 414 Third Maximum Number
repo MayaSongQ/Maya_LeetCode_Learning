@@ -144,3 +144,67 @@ public:
         }
     }
 };
+
+Solution 3: Runtime: 8 ms, faster than 97.95%.Memory Usage: 9.2 MB, less than 52.58%
+class Solution {
+public:
+    int thirdMax(vector<int>& nums) {
+        if (1==nums.size())
+        {
+            return nums[0];
+        }
+        else if (2==nums.size())
+        {
+            return nums[0]>nums[1]?nums[0]:nums[1];
+        }
+        // Max number record
+        int iMax1 = INT_MIN;
+        int iMax2 = INT_MIN;
+        int iMax3 = INT_MIN;
+        int iCount = nums.size();
+        
+        for (int index=0; index<nums.size(); ++index)
+        {
+            if (nums[index]==iMax1 || nums[index]==iMax2 ||nums[index]==iMax3)
+            {
+                if (INT_MIN != nums[index]) // only the non-INT_MIN value need to be de-duplicate
+                {
+                    --iCount;
+                }
+                continue;
+            }
+            if (nums[index]>iMax1)
+            {
+                iMax3 = iMax2;
+                iMax2 = iMax1;
+                iMax1 = nums[index];
+            }
+            else if (nums[index]>iMax2)
+            {
+                iMax3 = iMax2;
+                iMax2 = nums[index];
+            }
+            else if (nums[index]>iMax3)
+            {
+                iMax3 = nums[index];
+            }
+            printf("iM1=%d,iM2=%d,iM3=%d\n",iMax1,iMax2,iMax3);
+        }
+        
+        printf("iM1=%d,iM2=%d,iM3=%d,iCount=%d\n",iMax1,iMax2,iMax3,iCount);
+        // Handle the case [1,1,2]. The array size is less than 3 after de-duplicate
+        if (3>iCount)
+        {
+            return iMax1;
+        }
+        // Handle the case [1,-2147483648,2],[-2147483648,-2147483648,2]. One or two input number is INT_MIN.
+        else if (INT_MIN==iMax3 && INT_MIN==iMax2)
+        {
+            return iMax1;
+        }
+        else
+        {
+            return iMax3;
+        }
+    }
+};
