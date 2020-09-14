@@ -1,0 +1,203 @@
+Suppose you have a long flowerbed in which some of the plots are planted and some are not. However, flowers cannot be planted in adjacent plots - they would compete for water and both would die.
+
+Given a flowerbed (represented as an array containing 0 and 1, where 0 means empty and 1 means not empty), and a number n, return if n new flowers can be planted in it without violating the no-adjacent-flowers rule.
+
+Example 1:
+Input: flowerbed = [1,0,0,0,1], n = 1
+Output: True
+Example 2:
+Input: flowerbed = [1,0,0,0,1], n = 2
+Output: False
+Note:
+The input array won't violate no-adjacent-flowers rule.
+The input array size is in the range of [1, 20000].
+n is a non-negative integer which won't exceed the input array size.
+
+Solution 1: Runtime: 68 ms, faster than 9.72%. Memory Usage: 22 MB, less than 5.10% 
+class Solution {
+public:
+    bool canPlaceFlowers(vector<int>& flowerbed, int n) {
+        /*
+        Suppose you have a long flowerbed in which some of the plots are planted and some are not. 
+        However, flowers cannot be planted in adjacent plots - they would compete for water and both would die.
+        Given a flowerbed (represented as an array containing 0 and 1, where 0 means empty and 1 means not empty), 
+        and a number n, return if n new flowers can be planted in it without violating the no-adjacent-flowers rule.
+        The input array won't violate no-adjacent-flowers rule.
+        The input array size is in the range of [1, 20000].
+        n is a non-negative integer which won't exceed the input array size.
+        */
+        /*
+        It is unclear whether n could be 0, but it is always true when n==0. so it needs to be considered.
+        If the input array size is 1: [1] n==1 is false, n==0 is true; [0] n<=1 is true
+        If the input array size is 2: [0,1] or [1,0] n>=1 is false, n==0 is true; [0,0] n>1|n==0 is false, n==1 is true
+        Notice the 0 beside 1 should be marked as 'not-available'.
+        The 1 numbers + n <= array size/2
+        */
+        if (0==n)
+        {
+            return true;
+        }
+        
+        vector<int> vec0;
+        vector<int> vec1;
+        int iCount0 = 0;
+        int iCount1 = 0;
+        int iNum = 0;
+        for (int i=0; i<flowerbed.size(); ++i)
+        {
+            if (0 == flowerbed[i])
+            {
+                ++iCount0;
+                vec0.push_back(i);
+            }
+            else if (1 == flowerbed[i])
+            {
+                ++iCount1;
+                vec1.push_back(i);
+            }
+        }
+        if ((0==iCount0|iCount1==iCount0) && n>0)
+        {
+            return false;
+        }
+        else if ( (iCount1+n)>(flowerbed.size()/2+1))
+        {
+            return false;
+        }
+        else if (iCount0==n && flowerbed.size()==1)
+        {
+            return true;
+        }
+        else if (iCount1==n && flowerbed.size()==1)
+        {
+            return false;
+        }
+
+        // Calculate the available place
+        vector<int>::iterator iter = vec0.begin();
+        for (int i=0;i<vec0.size();)
+        {
+            if (0<=(i-1) && (i+1)<vec0.size() && (vec0[i-1]+1)==vec0[i] && vec0[i+1]==(vec0[i]+1))
+            {
+                ++iNum;
+                iter = vec0.erase(std::begin(vec0)+i); //Delete the i element
+            }
+            else if (0==i && vec0[i]==0 && (i+1)<vec0.size() && vec0[i+1]==(vec0[i]+1))
+            {
+                ++iNum;
+                iter = vec0.erase(std::begin(vec0)+i); //Delete the i element
+            }
+            else if (0<=(i-1) && (vec0[i-1]+1)==vec0[i] && (i+1)==vec0.size() && vec0[i]==(flowerbed.size()-1))
+            {
+                ++iNum;
+                iter = vec0.erase(std::begin(vec0)+i); //Delete the i element
+            }
+            else
+            {
+                ++i;
+            }
+
+        }
+        if (iNum >= n)
+        {
+            return true;
+        }
+        return false;
+    }
+};
+
+Solution 2: Runtime: 80 ms, faster than 5.51%.Memory Usage: 20.5 MB, less than 38.65%
+class Solution {
+public:
+    bool canPlaceFlowers(vector<int>& flowerbed, int n) {
+        if (0==n)
+        {
+            return true;
+        }
+
+        int iNum = 0; // Mark the available place
+        for (int i=0; i<flowerbed.size(); ++i)
+        {
+            if (1==flowerbed[i])
+            {
+                continue;
+            }
+            int iPre = 1; // Mark the previous element before iterator i
+            int iNext = 1;// Mark the next element after iterator i
+            // check the boundary of iPre
+            if (0==i || 0==flowerbed[i-1])
+            {
+                iPre = 0;
+            }
+            if (i==flowerbed.size()-1 || 0==flowerbed[i+1])
+            {
+                iNext = 0;
+            }
+            if (0==iPre && 0==iNext)
+            {
+                flowerbed[i] = 1;
+                ++iNum;
+            }
+        }
+
+        if (iNum >= n)
+        {
+            return true;
+        }
+        return false;
+    }
+};
+
+Solution 3: Runtime: 40 ms, faster than 59.51%.Memory Usage: 20.4 MB, less than 44.69%
+class Solution {
+public:
+    bool canPlaceFlowers(vector<int>& flowerbed, int n) {
+        if (0==n)
+        {
+            return true;
+        }
+
+        int iPre2 = -1; // Mark the previous 2 element before iterator i
+        int iPre1 = -1; // Mark the previous 1 element before iterator i
+        int iCur = -1; // Mark the current element
+        int iNum = 0; // Mark the available place
+        for (int i=0; i<=flowerbed.size(); ++i)
+        {
+            // [iPre2,iPre1,iCur] marked the iPre1 could be planted if iPre2==iPre1==iCur==0
+            // check the boundary of iPre
+            if (0==i)
+            {
+                iPre1 = 0;
+                if (1==flowerbed.size())
+                {
+                    iPre2 = 0;
+                }
+            }
+            if (i==flowerbed.size())
+            {
+                iCur = 0;
+            }
+            else
+            {
+                iCur = flowerbed[i];
+            }
+
+            if (0==iPre2 && 0==iPre1 && 0==iCur)
+            {
+                iPre2 = 1;
+                ++iNum;
+            }
+            else
+            {
+                iPre2 = iPre1;
+                iPre1 = iCur;
+            }
+
+        }
+        if (iNum >= n)
+        {
+            return true;
+        }
+        return false;
+    }
+};
